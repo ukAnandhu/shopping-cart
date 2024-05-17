@@ -7,10 +7,6 @@ from . import views
 urlpatterns = [
     path('place_order/',views.place_order,name='place_order'),
     path('payments/',views.payments,name='payments'),
-
-
-    # path('category/<slug:category_slug>/',views.store,name='product_by_category'),
-    # path('category/<slug:category_slug>/<slug:product_slug>/',views.product_detail,name='product_detail'),
-    # path('search/',views.search,name='search'),
+    path('order_complete/',views.order_complete,name='order_complete'),
 
 ]
