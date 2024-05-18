@@ -4,6 +4,7 @@ import requests
 
 from cart.models import Cart, CartItem
 from cart.views import _cart_id
+from orders.models import Order, OrderProduct
 from .forms import RegistrationForm
 from .models import Account
 from django.contrib import messages
@@ -137,7 +138,15 @@ def activate(req,uidb64,token):
 #dashboard
 @login_required(login_url = 'login')
 def dashboard(req):
-    return render(req,'accounts/dashboard.html')
+    orders = Order.objects.order_by('-created_at').filter(user_id=req.user.id, is_ordered=True)
+    orders_count = orders.count()
+
+    # userprofile = UserProfile.objects.get(user_id=request.user.id)
+    context = {
+        'orders_count': orders_count,
+        # 'userprofile': userprofile,
+    }
+    return render(req,'accounts/dashboard.html',context)
 
 
 
@@ -197,3 +206,26 @@ def resetpassword(req):
             return redirect('resetpassword')
     else:
         return render(req,'accounts/resetpassword.html')
+    
+@login_required(login_url='login')
+def my_orders(req):
+    orders = Order.objects.filter(user=req.user, is_ordered=True).order_by('-created_at')
+    context = {
+        'orders': orders,
+    }
+    return render(req,'accounts/my_orders.html',context)
+
+@login_required(login_url='login')
+def order_detail(request, order_id):
+    order_detail = OrderProduct.objects.filter(order__order_number=order_id)
+    order = Order.objects.get(order_number=order_id)
+    subtotal = 0
+    for i in order_detail:
+        subtotal += i.product_price * i.quantity
+
+    context = {
+        'order_detail': order_detail,
+        'order': order,
+        'subtotal': subtotal,
+    }
+    return render(request, 'accounts/order_detail.html', context)
