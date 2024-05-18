@@ -69,29 +69,49 @@
 	<div class="row">
 				<div class="col-md-9">
 	
+		
+		<form action="{% url 'submit_review' single_product.id %}" method="post">
+			{% csrf_token %}
+			<h5>Write your review</h5>
+			<div>
+				Review Title : 
+				<input type="text" class="form-control" name="subject" required><br>
+				Review:
+				<textarea name="review" class="form-control" rows="4">
+
+				</textarea><br>
+				{% if user.is_authenticated %}
+					{% if orderproduct %}
+						<input type="submit" value="Submit Review" class="btn btn-primary">
+					{% else %}
+						<p>You must purchase this product to post review</p>
+					{% endif %}
+				{% else %}
+					<p><strong>You must be logged into post review</strong> <a href="{% url 'login' %}">Login now</a></p>
+				{% endif %}
+			</div>
+			{% include 'includes/alerts.html' %}
+		</form><br>
 		<header class="section-heading">
 			<h3>Customer Reviews </h3>  
 			
 		</header>
-	
-		<article class="box mb-3">
-			<div class="icontext w-100">
-				<img src="{%static './images/avatars/avatar1.jpg' %}" class="img-xs icon rounded-circle">
-				<div class="text">
-					<span class="date text-muted float-md-right">24.04.2020 </span>  
-					<h6 class="mb-1">Mike John </h6>
-					
+		{% for review in reviews %}
+			<article class="box mb-3">
+				<div class="icontext w-100">
+					<!-- <img src="{%static './images/avatars/avatar1.jpg' %}" class="img-xs icon rounded-circle"> -->
+					<div class="text">
+						<span class="date text-muted float-md-right">{{review.updated_at}}</span>  
+						<h6 class="mb-1">{{review.user.full_name}}</h6>
+						
+					</div>
+				</div> <!-- icontext.// -->
+				<div class="mt-3">
+					<h6>{{review.subject}}</h6>
+					<p>{{review.review}}</p>	
 				</div>
-			</div> <!-- icontext.// -->
-			<div class="mt-3">
-				<p>
-					Dummy comment Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-					tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-					quis nostrud exercitation ullamco laboris nisi ut aliquip
-				</p>	
-			</div>
-		</article>
-	
+			</article>
+		{% endfor %}
 		
 	
 		</div> <!-- col.// -->
