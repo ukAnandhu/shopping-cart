@@ -27,7 +27,7 @@ def store(req,category_slug=None):
         paged_products = paginator.get_page(page)
         product_count = products.count()
 
-    
+     
     return render(req,'store.html',{'products':paged_products,'product_count':product_count})
 
 def product_detail(req,category_slug,product_slug):
